@@ -1,0 +1,7 @@
+scikit-image
+sklearn
+matplot
+numpy
+scipy
+pandas
+virtualenv
