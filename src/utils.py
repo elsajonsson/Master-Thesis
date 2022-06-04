@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import seaborn as sns
 import time
+import sklearn.metrics as metrics
 from sklearn.model_selection import train_test_split, RepeatedStratifiedKFold, GridSearchCV, cross_val_score
 from sklearn.metrics import roc_curve, auc, average_precision_score, PrecisionRecallDisplay, confusion_matrix, ConfusionMatrixDisplay, plot_precision_recall_curve, precision_recall_curve, average_precision_score
 from numpy import reshape
@@ -215,6 +216,7 @@ def mcnemar_data_table(model1, model2, embeddings_model1_test, embeddings_model2
 # PLOT AUC FOR EACH REDUCED TRAINING SET MODEL
 def percentage_plot_auc(network_lst, embeddings_inpainting_test, classes_inpainting_test, embeddings_simclr_light_test, classes_simclr_light_test, embeddings_simclr_aggressive_test, classes_simclr_aggressive_test):  
     percentage_lst = [0.1,0.3,0.5,0.7,1]
+    plot_percentage_lst = [10,30,50,70,100]
     for emb_type in network_lst:
         if emb_type == 'LR with DIME-Inpainting':
             auc_list = []
@@ -223,7 +225,7 @@ def percentage_plot_auc(network_lst, embeddings_inpainting_test, classes_inpaint
                 y_pred_proba = network.predict_proba(embeddings_inpainting_test)[::,1]
                 auc = metrics.roc_auc_score(classes_inpainting_test, y_pred_proba)
                 auc_list.append(auc)
-            plt.plot(percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
+            plt.plot(plot_percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
         elif emb_type == 'MLP with DIME-Inpainting':
             auc_list = []
             for percentage in percentage_lst:
@@ -231,7 +233,7 @@ def percentage_plot_auc(network_lst, embeddings_inpainting_test, classes_inpaint
                 y_pred_proba = network.predict_proba(embeddings_inpainting_test)[::,1]
                 auc = metrics.roc_auc_score(classes_inpainting_test, y_pred_proba)
                 auc_list.append(auc)
-            plt.plot(percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)  
+            plt.plot(plot_percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)  
         elif emb_type == 'GB with DIME-Inpainting':
             auc_list = []
             for percentage in percentage_lst:
@@ -239,7 +241,7 @@ def percentage_plot_auc(network_lst, embeddings_inpainting_test, classes_inpaint
                 y_pred_proba = network.predict_proba(embeddings_inpainting_test)[::,1]
                 auc = metrics.roc_auc_score(classes_inpainting_test, y_pred_proba)
                 auc_list.append(auc)
-            plt.plot(percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
+            plt.plot(plot_percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
         elif emb_type == 'LR with DIME-SimCLR Light':
             auc_list = []
             for percentage in percentage_lst:
@@ -247,7 +249,7 @@ def percentage_plot_auc(network_lst, embeddings_inpainting_test, classes_inpaint
                 y_pred_proba = network.predict_proba(embeddings_simclr_light_test)[::,1]
                 auc = metrics.roc_auc_score(classes_inpainting_test, y_pred_proba)
                 auc_list.append(auc)
-            plt.plot(percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
+            plt.plot(plot_percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
         elif emb_type == 'MLP with DIME-SimCLR Light':
             auc_list = []
             for percentage in percentage_lst:
@@ -255,7 +257,7 @@ def percentage_plot_auc(network_lst, embeddings_inpainting_test, classes_inpaint
                 y_pred_proba = network.predict_proba(embeddings_simclr_light_test)[::,1]
                 auc = metrics.roc_auc_score(classes_inpainting_test, y_pred_proba)
                 auc_list.append(auc)
-            plt.plot(percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
+            plt.plot(plot_percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
         elif emb_type == 'LR with DIME-SimCLR Aggressive':
             auc_list = []
             for percentage in percentage_lst:
@@ -263,7 +265,7 @@ def percentage_plot_auc(network_lst, embeddings_inpainting_test, classes_inpaint
                 y_pred_proba = network.predict_proba(embeddings_simclr_aggressive_test)[::,1]
                 auc = metrics.roc_auc_score(classes_inpainting_test, y_pred_proba)
                 auc_list.append(auc)
-            plt.plot(percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
+            plt.plot(plot_percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
         else:
             auc_list = []
             for percentage in percentage_lst:
@@ -271,10 +273,12 @@ def percentage_plot_auc(network_lst, embeddings_inpainting_test, classes_inpaint
                 y_pred_proba = network.predict_proba(embeddings_simclr_aggressive_test)[::,1]
                 auc = metrics.roc_auc_score(classes_inpainting_test, y_pred_proba)
                 auc_list.append(auc)
-            plt.plot(percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
+            plt.plot(plot_percentage_lst,auc_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
+    x1,x2,y1,y2 = plt.axis()  
+    plt.axis((x1,x2,0.88,0.96))
     plt.ylabel('AUC')
     plt.xlabel('Percentage')
-    plt.legend(loc='upper left');
+    plt.legend(loc='lower right');
     plt.savefig('results/auc_percentage.png', dpi=300, bbox_inches='tight')
     plt.show()
 
@@ -339,9 +343,11 @@ def percentage_plot_ap(network_lst, embeddings_inpainting_test, classes_inpainti
                 ap = average_precision_score(classes_inpainting_test, y_pred_proba)
                 ap_list.append(ap)
             plt.plot(plot_percentage_lst,ap_list,label=str(emb_type),ls='--',marker = '.', markersize = 10)
+    x1,x2,y1,y2 = plt.axis()  
+    plt.axis((x1,x2,0.77,1))
     plt.ylabel('AP')
     plt.xlabel('Percentage')
-    plt.legend(loc='lower left');
+    plt.legend(loc='upper left');
     plt.savefig('results/ap_percentage.png', dpi=300, bbox_inches='tight')
     plt.show()    
 
